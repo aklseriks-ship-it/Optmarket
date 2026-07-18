@@ -138,15 +138,6 @@
       </g>
       <circle cx="105" cy="30" r="5" fill="#E8A93B"/>
     </svg>
-    <div class="nav">
-      <button data-tab="overview" class="active">Обзор</button>
-      <button data-tab="tasks">Портфель</button>
-      <button data-tab="content">Контент / охваты</button>
-      <button data-tab="pricing">Юнит-экономика</button>
-      <button data-tab="wholesalers">База оптовиков</button>
-      <button data-tab="leads">Лиды</button>
-      <button data-tab="directions">Направления</button>
-    </div>
     <div class="sidebar-foot">Данные сохраняются автоматически, видны только вам.</div>
   </div>
 
@@ -748,15 +739,6 @@ $("#addWholesaler").addEventListener("click", async ()=>{
 $("#addLead").addEventListener("click", async ()=>{
   state.leads.push({id:crypto.randomUUID(), name:"Новый лид", source:"", stage:"Новый", note:""});
   await save("leads"); renderLeads(); renderOverview();
-});
-
-$$(".nav button").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    $$(".nav button").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    const target = $("#tab-"+btn.dataset.tab);
-    if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
-  });
 });
 
 (async function init(){

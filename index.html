@@ -114,6 +114,23 @@
 
   section[id^="tab-"]{scroll-margin-top:24px;padding-top:8px;margin-bottom:44px;border-top:1px solid var(--line);}
   section#tab-overview{border-top:none;}
+
+  @media(max-width:700px){
+    table.responsive-cards thead{display:none;}
+    table.responsive-cards, table.responsive-cards tbody{display:block;width:100%;}
+    table.responsive-cards tr{display:block;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:#fff;}
+    table.responsive-cards tr:last-child{margin-bottom:0;}
+    table.responsive-cards td{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid #F0ECE1;text-align:right;}
+    table.responsive-cards td:last-child{border-bottom:none;}
+    table.responsive-cards td::before{content:attr(data-label);font-size:11px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;text-align:left;flex-shrink:0;}
+    table.responsive-cards td[data-label=""]::before{content:none;}
+    table.responsive-cards td.td-check{justify-content:flex-start;}
+    table.responsive-cards td.td-check::before{content:"Готово";}
+    table.responsive-cards td.td-del{justify-content:center;}
+    table.responsive-cards td.td-del .del{width:100%;padding:8px;border:1px solid var(--line);border-radius:7px;}
+    table.responsive-cards .cell, table.responsive-cards select.cell, table.responsive-cards input.cell{text-align:right;}
+    table.responsive-cards .empty{border:none;padding:16px 0;}
+  }
 </style>
 </head>
 <body>
@@ -155,7 +172,6 @@
           <div class="kpi"><label>Охват — видео/цель 10 млн</label><input class="mono" data-kpi="viewsTotal" placeholder="0" disabled></div>
           <div class="kpi"><label>Оптовиков в базе</label><input class="mono" data-kpi="wholesalersCount" placeholder="0" disabled></div>
           <div class="kpi"><label>Открыто городов</label><input class="mono" data-kpi="citiesCount" placeholder="0" disabled></div>
-          <div class="kpi"><label>Активных лидов</label><input class="mono" data-kpi="leadsCount" placeholder="0" disabled></div>
         </div>
         <div class="card" id="revenueProgressCard">
           <h2>Прогресс к цели 50 000 000 ₸ — выручка за август</h2>
@@ -208,7 +224,7 @@
               <button class="btn ghost" data-addco="a" style="padding:5px 10px;font-size:12px">+ Задача</button>
             </div>
             <div class="portfolio-body">
-              <table><tbody data-cobody="a"></tbody></table>
+              <table class="responsive-cards"><tbody data-cobody="a"></tbody></table>
             </div>
           </div>
           <div class="portfolio-col" data-company="b">
@@ -219,13 +235,13 @@
               <button class="btn ghost" data-addco="b" style="padding:5px 10px;font-size:12px">+ Задача</button>
             </div>
             <div class="portfolio-body">
-              <table><tbody data-cobody="b"></tbody></table>
+              <table class="responsive-cards"><tbody data-cobody="b"></tbody></table>
             </div>
           </div>
         </div>
         <div class="card shared-block">
           <div class="row-head"><h2>Общие задачи (не привязаны к одной компании)</h2><button class="btn" id="addTask">+ Задача</button></div>
-          <table>
+          <table class="responsive-cards">
             <thead><tr><th style="width:28px"></th><th>Задача</th><th>Ответственный</th><th>Компания</th><th>Дедлайн</th><th>Статус</th><th></th></tr></thead>
             <tbody id="tasksBody"></tbody>
           </table>
@@ -248,7 +264,7 @@
           <div class="progress-outer"><div class="progress-inner" id="contentProgressBar"></div></div>
         </div>
         <div class="card">
-          <table>
+          <table class="responsive-cards">
             <thead><tr><th>Видео / контент</th><th>Платформа</th><th>Дата</th><th>Просмотры</th><th></th></tr></thead>
             <tbody id="contentBody"></tbody>
           </table>
@@ -261,7 +277,7 @@
           <div><h1>Юнит-экономика</h1><p>Отпускные цены по сегментам. Цифры редактируемые — правьте по мере уточнения.</p></div>
         </div>
         <div class="card">
-          <table>
+          <table class="responsive-cards">
             <thead><tr><th>Товар</th><th>Закупка</th><th>RRP (розница)</th><th>Дропшиппер: цена / маржа</th><th>Опт-1 (~$1000): цена / маржа</th><th>Опт-2 ($5–10k): цена / условие</th></tr></thead>
             <tbody id="pricingBody"></tbody>
           </table>
@@ -285,23 +301,9 @@
           <button class="btn" id="addWholesaler">+ Контакт</button>
         </div>
         <div class="card">
-          <table>
+          <table class="responsive-cards">
             <thead><tr><th>Имя</th><th>Город</th><th>Сегмент</th><th>Контакт</th><th>Посл. контакт</th><th>Сумма закупки, $</th><th></th></tr></thead>
             <tbody id="wholesalersBody"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- LEADS -->
-      <section id="tab-leads">
-        <div class="topbar">
-          <div><h1>Лиды</h1><p>Воронка на этапе первого контакта.</p></div>
-          <button class="btn" id="addLead">+ Лид</button>
-        </div>
-        <div class="card">
-          <table>
-            <thead><tr><th>Имя / компания</th><th>Источник</th><th>Этап</th><th>Заметка</th><th></th></tr></thead>
-            <tbody id="leadsBody"></tbody>
           </table>
         </div>
       </section>
@@ -346,13 +348,13 @@ const DEFAULT_TASKS = [
   {id:crypto.randomUUID(), title:"Финмодель Opt Market Hub", owner:"Акылсерик + Гульзат", company:"shared", deadline:"2026-07-27", status:"open"},
   {id:crypto.randomUUID(), title:"Оформить договор с дропшипперами (обязательство выкупа при порче/непродаже)", owner:"Не назначено", company:"shared", deadline:"2026-07-29", status:"open"},
   {id:crypto.randomUUID(), title:"Начать сертификацию электроники — до старта продаж", owner:"Гульзат", company:"b", deadline:"2026-08-10", status:"open"},
+  {id:crypto.randomUUID(), title:"Запустить таргет с оффером «Зарабатывай на бьюти» (привлечение партнёров/дропшипперов)", owner:"Не назначено", company:"a", deadline:"", status:"open"},
 ];
 const DEFAULT_PRICING = [
   {id:"iumi", product:"IUMI (шампунь/кондиционер/сыворотка)", cost:"3 400 ₸", rrp:"15 000 ₸", dropship:"10 000 ₸ / маржа 5 000 ₸", opt1:"7 500 ₸ / маржа 1:1 (х2)", opt2:"≈4 420 ₸ (закупка +30%)"},
   {id:"combine", product:"Кухонный комбайн", cost:"50 000 ₸", rrp:"150 000 ₸", dropship:"уточняется", opt1:"уточняется", opt2:"уточняется"},
 ];
 const DEFAULT_WHOLESALERS = [];
-const DEFAULT_LEADS = [];
 const DEFAULT_CITIES = [
   {name:"Алматы", live:true},
   {name:"Астана", live:false},
@@ -368,10 +370,10 @@ const DEFAULT_DIRECTIONS = [
   {id:"fifth", name:"5-е направление", status:"idea", note:"Закрыто на данном этапе — не определено, не в фокусе."},
 ];
 
-let state = { tasks:null, wholesalers:null, leads:null, cities:null, directions:null, kpis:null, pricing:null, companies:null, content:null };
+let state = { tasks:null, wholesalers:null, cities:null, directions:null, kpis:null, pricing:null, companies:null, content:null };
 
 async function loadAll(){
-  const keys = ["tasks","wholesalers","leads","cities","directions","kpis","pricing","companies","content"];
+  const keys = ["tasks","wholesalers","cities","directions","kpis","pricing","companies","content"];
   for(const k of keys){
     try{
       const res = await window.storage.get(k, false);
@@ -380,7 +382,6 @@ async function loadAll(){
   }
   if(!state.tasks) state.tasks = DEFAULT_TASKS;
   if(!state.wholesalers) state.wholesalers = DEFAULT_WHOLESALERS;
-  if(!state.leads) state.leads = DEFAULT_LEADS;
   if(!state.cities) state.cities = DEFAULT_CITIES;
   if(!state.directions) state.directions = DEFAULT_DIRECTIONS;
   if(!state.pricing) state.pricing = DEFAULT_PRICING;
@@ -396,6 +397,14 @@ async function loadAll(){
       changed = true;
     }
   });
+
+  // one-time: add "запустить таргет с оффером «Зарабатывай на бьюти»" to Ayumi if missing
+  const targetTaskTitle = "Запустить таргет с оффером «Зарабатывай на бьюти» (привлечение партнёров/дропшипперов)";
+  if(!state.tasks.some(t=>t.title===targetTaskTitle)){
+    state.tasks.push({id:crypto.randomUUID(), title:targetTaskTitle, owner:"Не назначено", company:"a", deadline:"", status:"open"});
+    changed = true;
+  }
+
   if(changed) await save("tasks");
 }
 
@@ -424,20 +433,20 @@ function statusLabel(color, task){
 function taskRowHtml(t, forSharedTable){
   const color = statusOf(t);
   const companyCell = forSharedTable ? `
-      <td><select class="cell" data-field="company" data-id="${t.id}">
+      <td data-label="Компания"><select class="cell" data-field="company" data-id="${t.id}">
         <option value="shared" ${t.company==="shared"?"selected":""}>Общее</option>
         <option value="a" ${t.company==="a"?"selected":""}>${escapeHtml(state.companies.a)}</option>
         <option value="b" ${t.company==="b"?"selected":""}>${escapeHtml(state.companies.b)}</option>
       </select></td>` : "";
   return `
     <tr>
-      <td><input type="checkbox" ${t.status==="done"?"checked":""} data-act="done" data-id="${t.id}"></td>
-      <td><input class="cell" data-field="title" data-id="${t.id}" value="${escapeHtml(t.title)}"></td>
-      <td><input class="cell" data-field="owner" data-id="${t.id}" value="${escapeHtml(t.owner)}"></td>
+      <td data-label="Готово" class="td-check"><input type="checkbox" ${t.status==="done"?"checked":""} data-act="done" data-id="${t.id}"></td>
+      <td data-label="Задача"><input class="cell" data-field="title" data-id="${t.id}" value="${escapeHtml(t.title)}"></td>
+      <td data-label="Ответственный"><input class="cell" data-field="owner" data-id="${t.id}" value="${escapeHtml(t.owner)}"></td>
       ${companyCell}
-      <td><input class="cell" type="date" data-field="deadline" data-id="${t.id}" value="${t.deadline||""}"></td>
-      <td><span class="status-cell"><span class="dot ${color}"></span>${statusLabel(color,t)}</span></td>
-      <td><button class="del" data-act="del" data-id="${t.id}">✕</button></td>
+      <td data-label="Дедлайн"><input class="cell" type="date" data-field="deadline" data-id="${t.id}" value="${t.deadline||""}"></td>
+      <td data-label="Статус"><span class="status-cell"><span class="dot ${color}"></span>${statusLabel(color,t)}</span></td>
+      <td data-label="" class="td-del"><button class="del" data-act="del" data-id="${t.id}">✕ Удалить</button></td>
     </tr>`;
 }
 
@@ -469,35 +478,17 @@ function renderWholesalers(){
   state.wholesalers.forEach(w=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td><input class="cell" data-wf="name" data-id="${w.id}" value="${escapeHtml(w.name)}"></td>
-      <td><select class="cell" data-wf="city" data-id="${w.id}">
+      <td data-label="Имя"><input class="cell" data-wf="name" data-id="${w.id}" value="${escapeHtml(w.name)}"></td>
+      <td data-label="Город"><select class="cell" data-wf="city" data-id="${w.id}">
         ${state.cities.map(c=>`<option value="${c.name}" ${w.city===c.name?"selected":""}>${c.name}</option>`).join("")}
       </select></td>
-      <td><select class="cell" data-wf="segment" data-id="${w.id}">
+      <td data-label="Сегмент"><select class="cell" data-wf="segment" data-id="${w.id}">
         ${["Дропшиппер","Опт-1 (~$1000)","Опт-2 ($5–10k)"].map(s=>`<option ${w.segment===s?"selected":""}>${s}</option>`).join("")}
       </select></td>
-      <td><input class="cell" data-wf="contact" data-id="${w.id}" value="${escapeHtml(w.contact||"")}"></td>
-      <td><input class="cell" type="date" data-wf="lastContact" data-id="${w.id}" value="${w.lastContact||""}"></td>
-      <td><input class="cell mono" data-wf="amount" data-id="${w.id}" value="${escapeHtml(w.amount||"")}"></td>
-      <td><button class="del" data-act="delw" data-id="${w.id}">✕</button></td>
-    `;
-    body.appendChild(tr);
-  });
-}
-
-function renderLeads(){
-  const body = $("#leadsBody"); body.innerHTML = "";
-  if(state.leads.length===0){ body.innerHTML = `<tr><td colspan="5" class="empty">Лидов пока нет.</td></tr>`; return; }
-  state.leads.forEach(l=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><input class="cell" data-lf="name" data-id="${l.id}" value="${escapeHtml(l.name)}"></td>
-      <td><input class="cell" data-lf="source" data-id="${l.id}" value="${escapeHtml(l.source||"")}"></td>
-      <td><select class="cell" data-lf="stage" data-id="${l.id}">
-        ${["Новый","В переговорах","Закрыт","Отказ"].map(s=>`<option ${l.stage===s?"selected":""}>${s}</option>`).join("")}
-      </select></td>
-      <td><input class="cell" data-lf="note" data-id="${l.id}" value="${escapeHtml(l.note||"")}"></td>
-      <td><button class="del" data-act="dell" data-id="${l.id}">✕</button></td>
+      <td data-label="Контакт"><input class="cell" data-wf="contact" data-id="${w.id}" value="${escapeHtml(w.contact||"")}"></td>
+      <td data-label="Посл. контакт"><input class="cell" type="date" data-wf="lastContact" data-id="${w.id}" value="${w.lastContact||""}"></td>
+      <td data-label="Сумма закупки, $"><input class="cell mono" data-wf="amount" data-id="${w.id}" value="${escapeHtml(w.amount||"")}"></td>
+      <td data-label="" class="td-del"><button class="del" data-act="delw" data-id="${w.id}">✕ Удалить</button></td>
     `;
     body.appendChild(tr);
   });
@@ -539,12 +530,12 @@ function renderPricing(){
   state.pricing.forEach(p=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td><input class="cell" data-pf="product" data-id="${p.id}" value="${escapeHtml(p.product)}"></td>
-      <td><input class="cell mono" data-pf="cost" data-id="${p.id}" value="${escapeHtml(p.cost)}"></td>
-      <td><input class="cell mono" data-pf="rrp" data-id="${p.id}" value="${escapeHtml(p.rrp)}"></td>
-      <td><input class="cell mono" data-pf="dropship" data-id="${p.id}" value="${escapeHtml(p.dropship)}"></td>
-      <td><input class="cell mono" data-pf="opt1" data-id="${p.id}" value="${escapeHtml(p.opt1)}"></td>
-      <td><input class="cell mono" data-pf="opt2" data-id="${p.id}" value="${escapeHtml(p.opt2)}"></td>
+      <td data-label="Товар"><input class="cell" data-pf="product" data-id="${p.id}" value="${escapeHtml(p.product)}"></td>
+      <td data-label="Закупка"><input class="cell mono" data-pf="cost" data-id="${p.id}" value="${escapeHtml(p.cost)}"></td>
+      <td data-label="RRP"><input class="cell mono" data-pf="rrp" data-id="${p.id}" value="${escapeHtml(p.rrp)}"></td>
+      <td data-label="Дропшиппер"><input class="cell mono" data-pf="dropship" data-id="${p.id}" value="${escapeHtml(p.dropship)}"></td>
+      <td data-label="Опт-1"><input class="cell mono" data-pf="opt1" data-id="${p.id}" value="${escapeHtml(p.opt1)}"></td>
+      <td data-label="Опт-2"><input class="cell mono" data-pf="opt2" data-id="${p.id}" value="${escapeHtml(p.opt2)}"></td>
     `;
     body.appendChild(tr);
   });
@@ -558,11 +549,11 @@ function renderContent(){
     state.content.forEach(c=>{
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><input class="cell" data-cf="title" data-id="${c.id}" value="${escapeHtml(c.title)}"></td>
-        <td><input class="cell" data-cf="platform" data-id="${c.id}" value="${escapeHtml(c.platform||"")}"></td>
-        <td><input class="cell" type="date" data-cf="date" data-id="${c.id}" value="${c.date||""}"></td>
-        <td><input class="cell mono" data-cf="views" data-id="${c.id}" value="${c.views||0}"></td>
-        <td><button class="del" data-act="delc" data-id="${c.id}">✕</button></td>
+        <td data-label="Видео/контент"><input class="cell" data-cf="title" data-id="${c.id}" value="${escapeHtml(c.title)}"></td>
+        <td data-label="Платформа"><input class="cell" data-cf="platform" data-id="${c.id}" value="${escapeHtml(c.platform||"")}"></td>
+        <td data-label="Дата"><input class="cell" type="date" data-cf="date" data-id="${c.id}" value="${c.date||""}"></td>
+        <td data-label="Просмотры"><input class="cell mono" data-cf="views" data-id="${c.id}" value="${c.views||0}"></td>
+        <td data-label="" class="td-del"><button class="del" data-act="delc" data-id="${c.id}">✕ Удалить</button></td>
       `;
       body.appendChild(tr);
     });
@@ -580,7 +571,6 @@ function renderContent(){
 function renderOverview(){
   $("input[data-kpi=wholesalersCount]").value = state.wholesalers.length;
   $("input[data-kpi=citiesCount]").value = state.cities.filter(c=>c.live).length + " / " + state.cities.length;
-  $("input[data-kpi=leadsCount]").value = state.leads.filter(l=>l.stage!=="Закрыт" && l.stage!=="Отказ").length;
   $("input[data-kpi=sales]").value = state.kpis.sales || "";
 
   const revenue = parseInt(state.kpis.sales) || 0;
@@ -620,7 +610,7 @@ function renderOverview(){
 }
 
 function renderAll(){
-  renderTasks(); renderWholesalers(); renderLeads(); renderCities(); renderDirections(); renderPricing(); renderContent(); renderOverview();
+  renderTasks(); renderWholesalers(); renderCities(); renderDirections(); renderPricing(); renderContent(); renderOverview();
 }
 
 function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
@@ -647,11 +637,6 @@ document.addEventListener("input", async (e)=>{
     const w = state.wholesalers.find(x=>x.id===id); if(!w) return;
     w[e.target.dataset.wf] = e.target.value;
     await save("wholesalers"); renderOverview();
-  }
-  if(e.target.dataset.lf){
-    const l = state.leads.find(x=>x.id===id); if(!l) return;
-    l[e.target.dataset.lf] = e.target.value;
-    await save("leads"); renderOverview();
   }
   if(e.target.dataset.pf){
     const p = state.pricing.find(x=>x.id===id); if(!p) return;
@@ -694,10 +679,6 @@ document.addEventListener("click", async (e)=>{
     state.wholesalers = state.wholesalers.filter(x=>x.id!==id);
     await save("wholesalers"); renderWholesalers(); renderOverview();
   }
-  if(act==="dell"){
-    state.leads = state.leads.filter(x=>x.id!==id);
-    await save("leads"); renderLeads(); renderOverview();
-  }
   if(act==="delc"){
     state.content = state.content.filter(x=>x.id!==id);
     await save("content"); renderContent(); renderOverview();
@@ -735,10 +716,6 @@ $("#addTask").addEventListener("click", async ()=>{
 $("#addWholesaler").addEventListener("click", async ()=>{
   state.wholesalers.push({id:crypto.randomUUID(), name:"Новый контакт", city:state.cities[0].name, segment:"Дропшиппер", contact:"", lastContact:"", amount:""});
   await save("wholesalers"); renderWholesalers(); renderOverview();
-});
-$("#addLead").addEventListener("click", async ()=>{
-  state.leads.push({id:crypto.randomUUID(), name:"Новый лид", source:"", stage:"Новый", note:""});
-  await save("leads"); renderLeads(); renderOverview();
 });
 
 (async function init(){

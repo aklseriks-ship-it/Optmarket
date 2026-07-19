@@ -349,6 +349,10 @@ const DEFAULT_TASKS = [
   {id:crypto.randomUUID(), title:"Оформить договор с дропшипперами (обязательство выкупа при порче/непродаже)", owner:"Не назначено", company:"shared", deadline:"2026-07-29", status:"open"},
   {id:crypto.randomUUID(), title:"Начать сертификацию электроники — до старта продаж", owner:"Гульзат", company:"b", deadline:"2026-08-10", status:"open"},
   {id:crypto.randomUUID(), title:"Запустить таргет с оффером «Зарабатывай на бьюти» (привлечение партнёров/дропшипперов)", owner:"Не назначено", company:"a", deadline:"", status:"open"},
+  {id:crypto.randomUUID(), title:"Пост в Threads о запуске дропшиппинга", owner:"Акылсерик", company:"a", deadline:"", status:"done"},
+  {id:crypto.randomUUID(), title:"Подготовить креативы для таргета (статика/видео/сторис) по ТЗ", owner:"Не назначено", company:"a", deadline:"", status:"open"},
+  {id:crypto.randomUUID(), title:"Снять UGC-рилс с оффером «Зарабатывай на бьюти»", owner:"Не назначено", company:"a", deadline:"", status:"open"},
+  {id:crypto.randomUUID(), title:"Подготовить каталог продукции для дропшипперов", owner:"Не назначено", company:"a", deadline:"", status:"open"},
 ];
 const DEFAULT_PRICING = [
   {id:"iumi", product:"IUMI (шампунь/кондиционер/сыворотка)", cost:"3 400 ₸", rrp:"15 000 ₸", dropship:"10 000 ₸ / маржа 5 000 ₸", opt1:"7 500 ₸ / маржа 1:1 (х2)", opt2:"≈4 420 ₸ (закупка +30%)"},
@@ -404,6 +408,20 @@ async function loadAll(){
     state.tasks.push({id:crypto.randomUUID(), title:targetTaskTitle, owner:"Не назначено", company:"a", deadline:"", status:"open"});
     changed = true;
   }
+
+  // one-time: additional tasks from July planning session
+  const extraTasks = [
+    {title:"Пост в Threads о запуске дропшиппинга", owner:"Акылсерик", company:"a", deadline:"", status:"done"},
+    {title:"Подготовить креативы для таргета (статика/видео/сторис) по ТЗ", owner:"Не назначено", company:"a", deadline:"", status:"open"},
+    {title:"Снять UGC-рилс с оффером «Зарабатывай на бьюти»", owner:"Не назначено", company:"a", deadline:"", status:"open"},
+    {title:"Подготовить каталог продукции для дропшипперов", owner:"Не назначено", company:"a", deadline:"", status:"open"},
+  ];
+  extraTasks.forEach(nt=>{
+    if(!state.tasks.some(t=>t.title===nt.title)){
+      state.tasks.push({id:crypto.randomUUID(), ...nt});
+      changed = true;
+    }
+  });
 
   if(changed) await save("tasks");
 }

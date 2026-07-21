@@ -380,29 +380,24 @@ const DEFAULT_DIRECTIONS = [
 
 let state = { tasks:null, wholesalers:null, cities:null, directions:null, kpis:null, pricing:null, companies:null, content:null };
 
-const LS_PREFIX = "optmarkethub:";
-function lsGet(key){
-  try{
-    const raw = localStorage.getItem(LS_PREFIX+key);
-    if(raw === null) return null;
-    return { key, value: raw };
-  }catch(e){ return null; }
-}
-function lsSet(key, value){
-  try{
-    localStorage.setItem(LS_PREFIX+key, value);
-    return { key, value };
-  }catch(e){ console.error("localStorage save failed", key, e); return null; }
-}
+const API_URL = "/api/data";
 
 async function loadAll(){
-  const keys = ["tasks","wholesalers","cities","directions","kpis","pricing","companies","content"];
-  for(const k of keys){
-    try{
-      const res = lsGet(k);
-      state[k] = res ? JSON.parse(res.value) : null;
-    }catch(e){ state[k] = null; }
-  }
+  let remote = {};
+  try{
+    const res = await fetch(API_URL);
+    if(res.ok) remote = await res.json();
+  }catch(e){ console.error("shared storage load failed, falling back to defaults", e); }
+
+  state.tasks = remote.tasks || null;
+  state.wholesalers = remote.wholesalers || null;
+  state.cities = remote.cities || null;
+  state.directions = remote.directions || null;
+  state.pricing = remote.pricing || null;
+  state.companies = remote.companies || null;
+  state.content = remote.content || null;
+  state.kpis = remote.kpis || null;
+
   if(!state.tasks) state.tasks = DEFAULT_TASKS;
   if(!state.wholesalers) state.wholesalers = DEFAULT_WHOLESALERS;
   if(!state.cities) state.cities = DEFAULT_CITIES;
@@ -446,7 +441,13 @@ async function loadAll(){
 }
 
 async function save(key){
-  lsSet(key, JSON.stringify(state[key]));
+  try{
+    await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [key]: state[key] })
+    });
+  }catch(e){ console.error("shared storage save failed", key, e); }
 }
 
 function statusOf(task){

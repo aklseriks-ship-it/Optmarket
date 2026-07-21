@@ -380,11 +380,26 @@ const DEFAULT_DIRECTIONS = [
 
 let state = { tasks:null, wholesalers:null, cities:null, directions:null, kpis:null, pricing:null, companies:null, content:null };
 
+const LS_PREFIX = "optmarkethub:";
+function lsGet(key){
+  try{
+    const raw = localStorage.getItem(LS_PREFIX+key);
+    if(raw === null) return null;
+    return { key, value: raw };
+  }catch(e){ return null; }
+}
+function lsSet(key, value){
+  try{
+    localStorage.setItem(LS_PREFIX+key, value);
+    return { key, value };
+  }catch(e){ console.error("localStorage save failed", key, e); return null; }
+}
+
 async function loadAll(){
   const keys = ["tasks","wholesalers","cities","directions","kpis","pricing","companies","content"];
   for(const k of keys){
     try{
-      const res = await window.storage.get(k, false);
+      const res = lsGet(k);
       state[k] = res ? JSON.parse(res.value) : null;
     }catch(e){ state[k] = null; }
   }
@@ -431,8 +446,7 @@ async function loadAll(){
 }
 
 async function save(key){
-  try{ await window.storage.set(key, JSON.stringify(state[key]), false); }
-  catch(e){ console.error("save failed", key, e); }
+  lsSet(key, JSON.stringify(state[key]));
 }
 
 function statusOf(task){

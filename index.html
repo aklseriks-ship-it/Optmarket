@@ -457,6 +457,46 @@ async function loadAll(){
 
   if(changed) await save("tasks");
   if(!remote.contentPlan) await save("contentPlan");
+
+  // one-time: inject reference video links sent by user (19 июля batch)
+  const refItems = [
+    {cat:"Чайник", format:"Дешевый vs дорогой чайник в чем разница?", link:"https://www.tiktok.com/@igor_kleutin_/video/7615379894834302230"},
+    {cat:"Чайник", format:"я выбросила свой старый чайник так как это прошлый век", link:"https://www.tiktok.com/@alenakolym/video/7602599856804318484"},
+    {cat:"Швабра", format:"Это я пытаюсь понять, почему я единственный в доме, кто хочет жить в чистоте", link:"https://www.instagram.com/reel/DY5ENUlMx9V/?igsh=azVlcWU4eWlyajE4"},
+    {cat:"Швабра", format:"3 помощника которые сделали мою жизнь проще", link:"https://www.instagram.com/reel/DQgLmLSihLd/?igsh=dzdjZHA3MnJvM3R2"},
+    {cat:"Швабра", format:"POV: Временные финансовые трудности / Жена, которая понимает", link:"https://www.instagram.com/reel/DZpimk3sCMF/?igsh=MWIxcTNoZ3l1OHV4eA=="},
+    {cat:"Швабра", format:"Нормальные женщины, когда никого нет дома / Женщины с психическими отклонениями", link:"https://www.instagram.com/reel/DU0deywF32r/?igsh=MWZvMm1rbTBzMXVxcQ=="},
+    {cat:"Швабра", format:"Почему в отелях полы чище чем дома, даже когда их моют реже?", link:"https://www.instagram.com/reel/DZkzN_-NeWF/?igsh=MXdyYmZ3ajBzZ2wyMg=="},
+    {cat:"Швабра", format:"Что скрывается за желанием постоянно убираться?", link:"https://www.instagram.com/reel/DZkzN_-NeWF/?igsh=MXdyYmZ3ajBzZ2wyMg=="},
+    {cat:"Швабра", format:"Уборка для новичков", link:"https://www.tiktok.com/@wish.hin/video/7570592193593773368"},
+    {cat:"Швабра", format:"Тот самый момент, когда поняла, что годами мыла полы неправильно", link:"https://www.instagram.com/reel/DZkzN_-NeWF/?igsh=MXdyYmZ3ajBzZ2wyMg=="},
+    {cat:"Швабра", format:"как объяснить мужу почему я редко убираюсь", link:"https://www.instagram.com/reel/DXOo37RjeV6/?igsh=ano5Z2pxdW1nZjE0"},
+    {cat:"Швабра", format:"тот самый момент, когда нашла причину грязных носков", link:"https://www.instagram.com/reel/DZnE3zptWvi/?igsh=ajJyNXoxb2djanhs"},
+    {cat:"Швабра", format:"[формат-референс, не привязан к товару] Кому бы вы позвонили в прошлое?", link:"https://www.instagram.com/reel/DThEwOlCLTS/?igsh=amlqcWloc3g3bWMw"},
+    {cat:"Швабра", format:"[формат-референс, не привязан к товару] Она хотела быть эстетик герл", link:"https://www.instagram.com/reel/DaNIuZLMShD/?igsh=MTU4bWZvOGR5b3ltMg=="},
+    {cat:"Швабра", format:"[формат-референс, не привязан к товару] Как по мнению моего ребенка я должна водить", link:"https://www.instagram.com/reel/DagLQ0qBfha/?igsh=MWZ4eXk3NTl5ZWx6dA=="},
+    {cat:"Швабра", format:"[формат-референс, не привязан к товару] Позорься. Лезь куда хочешь. В деньгах счастье. Уходи не попрощавшись...", link:"https://www.instagram.com/reel/DZPNVc4sutL/?igsh=bGg0d3c4MXUxd213"},
+    {cat:"Швабра", format:"[формат-референс, не привязан к товару] Богатый vs бедный", link:"https://www.instagram.com/reel/DYKPEQcMw6m/?igsh=NnZxM2RxbW1kenc5"},
+    {cat:"Шампуни/кондиционеры", format:"Как Ариана Гранде ухаживает за волосами", link:"https://www.instagram.com/reel/DP_vC3UjLpg/?igsh=MW9hamU0cXZmeTJzMg=="},
+    {cat:"Шампуни/кондиционеры", format:"Худшее для волос", link:"https://www.tiktok.com/@nara_dov/video/7569334670484491538"},
+    {cat:"Шампуни/кондиционеры", format:"5 советов чтобы помыть волосы как в салоне", link:"https://www.tiktok.com/@pro.beautyclub/video/7613024548740451616"},
+    {cat:"Шампуни/кондиционеры", format:"Не покупайте эти известные шампуни если не хотите остаться без волос", link:"https://www.instagram.com/reel/DYVD7xHtaOh/?igsh=MWJxN2J6ZHo4dG1qdg=="},
+    {cat:"Шампуни/кондиционеры", format:"У нее будут сечься волосы / У нее будут здоровые", link:"https://www.instagram.com/reel/DVRE32VAvVb/?igsh=bmthOHMzeHN2OWU1"},
+    {cat:"Шампуни/кондиционеры", format:"Как из этого я пришла к этому", link:"https://www.instagram.com/reel/DWBe8onCIG2/?utm_source=ig_web_button_share_sheet"},
+    {cat:"Шампуни/кондиционеры", format:"Ошибки из-за которых у тебя не растут волосы", link:"https://www.instagram.com/reel/DWCE2IFjTE3/?utm_source=ig_web_button_share_sheet"},
+    {cat:"Шампуни/кондиционеры", format:"Сколько средств я трачу на 60 см волос", link:"https://www.tiktok.com/@kibizova_11/video/7597847154824088853"},
+    {cat:"Шампуни/кондиционеры", format:"Не делай так если хочешь длинные волосы", link:"https://www.instagram.com/reel/DPtVd5UiJfe/?utm_source=ig_web_button_share_sheet"},
+  ];
+  let refChanged = false;
+  refItems.forEach(ref=>{
+    if(!state.contentPlan[ref.cat]) state.contentPlan[ref.cat] = [];
+    const exists = state.contentPlan[ref.cat].some(x=>x.link===ref.link && x.format===ref.format);
+    if(!exists){
+      state.contentPlan[ref.cat].push({id:crypto.randomUUID(), format:ref.format, link:ref.link, status:"Референс"});
+      refChanged = true;
+    }
+  });
+  if(refChanged) await save("contentPlan");
 }
 
 async function save(key){
@@ -689,9 +729,12 @@ function renderContentPlan(){
       body.innerHTML = items.map(it=>`
         <tr>
           <td data-label="Идея/формат" class="td-title"><textarea class="cell cell-title" data-planfield="format" data-cat="${escapeHtml(cat)}" data-id="${it.id}" rows="2">${escapeHtml(it.format)}</textarea></td>
-          <td data-label="Ссылка"><input class="cell" data-planfield="link" data-cat="${escapeHtml(cat)}" data-id="${it.id}" value="${escapeHtml(it.link||"")}" placeholder="вставьте ссылку"></td>
+          <td data-label="Ссылка" style="display:flex;gap:6px;align-items:center">
+            <input class="cell" data-planfield="link" data-cat="${escapeHtml(cat)}" data-id="${it.id}" value="${escapeHtml(it.link||"")}" placeholder="вставьте ссылку">
+            ${it.link ? `<a href="${escapeHtml(it.link)}" target="_blank" rel="noopener" style="flex-shrink:0;font-size:11px;color:var(--teal);text-decoration:none;white-space:nowrap">Открыть ↗</a>` : ""}
+          </td>
           <td data-label="Статус"><select class="cell" data-planfield="status" data-cat="${escapeHtml(cat)}" data-id="${it.id}">
-            ${["Запланировано","Снято","На монтаже","Готово","Опубликовано"].map(s=>`<option ${it.status===s?"selected":""}>${s}</option>`).join("")}
+            ${["Референс","Запланировано","Снято","На монтаже","Готово","Опубликовано"].map(s=>`<option ${it.status===s?"selected":""}>${s}</option>`).join("")}
           </select></td>
           <td data-label="" class="td-del"><button class="del" data-act="delplan" data-cat="${escapeHtml(cat)}" data-id="${it.id}">✕ Удалить</button></td>
         </tr>

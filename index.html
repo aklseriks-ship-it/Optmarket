@@ -133,6 +133,20 @@
     table.responsive-cards textarea.cell-title{text-align:left;min-width:0;}
     table.responsive-cards .empty{border:none;padding:16px 0;}
   }
+  .print-only{display:none;}
+  @media print{
+    body *{visibility:hidden;}
+    #printReport, #printReport *{visibility:visible;}
+    #printReport{display:block !important; position:absolute; top:0; left:0; width:100%; padding:14mm; font-family:'Inter',sans-serif; color:#1B2430;}
+    #printReport h1{font-family:'Space Grotesk',sans-serif; color:#0E7C7B; font-size:20pt; margin:0 0 2mm;}
+    #printReport .rep-sub{color:#5B6472; font-size:10pt; margin-bottom:8mm;}
+    #printReport h2{font-family:'Space Grotesk',sans-serif; color:#0E7C7B; font-size:13pt; border-left:1mm solid #0E7C7B; padding-left:3mm; margin:8mm 0 3mm;}
+    #printReport table{width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:3mm;}
+    #printReport th{background:#EFEBE1; text-align:left; padding:2mm 3mm; font-size:8.5pt; text-transform:uppercase; color:#5B6472;}
+    #printReport td{padding:2mm 3mm; border-bottom:0.3mm solid #DDD7C7;}
+    #printReport .rep-total{text-align:right; font-weight:bold; color:#0E7C7B; margin-bottom:2mm;}
+    #printReport .rep-empty{color:#8A94A0; font-size:9.5pt; font-style:italic;}
+  }
 </style>
 </head>
 <body>
@@ -168,6 +182,7 @@
       <section id="tab-overview">
         <div class="topbar">
           <div><h1>Обзор</h1><p>Ключевые цифры — вводите вручную по мере поступления данных.</p></div>
+          <button class="btn" id="exportReportBtn">Скачать отчёт (PDF)</button>
         </div>
         <div class="kpi-grid">
           <div class="kpi"><label>Выручка, ₸ (август)</label><input class="mono" data-kpi="sales" placeholder="0" disabled></div>
@@ -922,6 +937,60 @@ $("#addWholesaler").addEventListener("click", async ()=>{
   await save("wholesalers"); renderWholesalers(); renderOverview();
 });
 
+function generateReport(){
+  const today = new Date().toLocaleDateString("ru-RU");
+  const revenue = state.sales.reduce((s,x)=> s + (parseFloat(x.amount)||0), 0);
+  const viewsSum = state.content.reduce((s,c)=>s + (parseInt(c.views)||0), 0);
+  const doneTasks = state.tasks.filter(t=>t.status==="done");
+  const companyName = co => co==="a" ? state.companies.a : co==="b" ? state.companies.b : "Общее";
+
+  let html = `<h1>Отчёт — Opt Market Hub</h1><div class="rep-sub">Сформирован ${today}</div>`;
+
+  // Sales
+  html += `<h2>Продажи</h2>`;
+  if(state.sales.length===0){
+    html += `<div class="rep-empty">Продаж пока нет.</div>`;
+  } else {
+    html += `<table><thead><tr><th>Дата</th><th>Компания</th><th>Описание</th><th>Сумма, ₸</th></tr></thead><tbody>`;
+    state.sales.forEach(s=>{
+      html += `<tr><td>${s.date||""}</td><td>${companyName(s.company)}</td><td>${(s.description||"").replace(/</g,"&lt;")}</td><td>${(parseFloat(s.amount)||0).toLocaleString("ru-RU")}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+  html += `<div class="rep-total">Итого продаж: ${revenue.toLocaleString("ru-RU")} ₸ (цель на август — 50 000 000 ₸)</div>`;
+
+  // Views / reach
+  html += `<h2>Охваты</h2>`;
+  if(state.content.length===0){
+    html += `<div class="rep-empty">Видео пока не добавлены.</div>`;
+  } else {
+    html += `<table><thead><tr><th>Видео / контент</th><th>Платформа</th><th>Дата</th><th>Просмотры</th></tr></thead><tbody>`;
+    state.content.forEach(c=>{
+      html += `<tr><td>${(c.title||"").replace(/</g,"&lt;")}</td><td>${c.platform||""}</td><td>${c.date||""}</td><td>${(parseInt(c.views)||0).toLocaleString("ru-RU")}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+  html += `<div class="rep-total">Итого просмотров: ${viewsSum.toLocaleString("ru-RU")} из цели 10 000 000</div>`;
+
+  // Completed tasks
+  html += `<h2>Выполненные задачи (${doneTasks.length} из ${state.tasks.length})</h2>`;
+  if(doneTasks.length===0){
+    html += `<div class="rep-empty">Пока нет выполненных задач.</div>`;
+  } else {
+    html += `<table><thead><tr><th>Задача</th><th>Ответственный</th><th>Компания</th><th>Дедлайн</th></tr></thead><tbody>`;
+    doneTasks.forEach(t=>{
+      html += `<tr><td>${(t.title||"").replace(/</g,"&lt;")}</td><td>${t.owner||""}</td><td>${companyName(t.company)}</td><td>${t.deadline||"—"}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+
+  $("#printReport").innerHTML = html;
+  window.print();
+}
+
+const exportBtn = document.getElementById("exportReportBtn");
+if(exportBtn) exportBtn.addEventListener("click", generateReport);
+
 (async function init(){
   await loadAll();
   renderAll();
@@ -929,5 +998,6 @@ $("#addWholesaler").addEventListener("click", async ()=>{
   $("#content").style.display="block";
 })();
 </script>
+<div id="printReport" class="print-only"></div>
 </body>
 </html>
